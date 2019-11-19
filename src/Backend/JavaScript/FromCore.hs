@@ -40,6 +40,8 @@ import Core.Core
 import Core.Pretty ()
 import Core.CoreVar
 
+import qualified Control.Monad.Fail as Fail
+
 type CommentDoc   = Doc
 type ConditionDoc = Doc
 
@@ -956,6 +958,9 @@ instance Monad Asm where
   (Asm a) >>= f = Asm (\env st -> case a env st of
                                     (x,st1) -> case f x of
                                                  Asm b -> b env st1)
+
+instance MonadFail Asm where
+  fail = Fail.fail
 
 runAsm :: Env -> Asm Doc -> Doc
 runAsm initEnv (Asm asm)
